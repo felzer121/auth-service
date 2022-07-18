@@ -15,14 +15,6 @@ export const sequelize = new Sequelize(db_name, db_username, db_password, {
     logging: false
 })
 
-try {
-    await sequelize.authenticate();
-    await sequelize.sync({ force: true });
-    console.log('Connect database ok.');
-  } catch (error) {
-    console.error('Unable connect database:', error);
-}
-
 const db = {
   sequelize
 };

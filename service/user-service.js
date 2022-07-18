@@ -1,27 +1,30 @@
 import ApiError from '../exceptions/api-error.js'
-import {UserModel} from '../models/user-model.js'
-import {v4} from 'uuid'
+import { UserModel } from '../models/user-model.js'
+import { generateTokens, saveToken } from '../service/token-service.js'
+import UserDto from '../dtos/user-dto.js'
+import { v4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
-class UserService {
-    async registration(email, password) {
-        console.log(user)
-        const candidate = await UserModel.findOne({email})
-        if (candidate) {
-            throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
+export const registrationService = async (email, password) => {
+    const candidate = await UserModel.findOne({
+        where: { 
+            email: email
         }
-        const hashPassword = await bcrypt.hash(password, 3);
-        const activationLink = v4(); // v34fa-asfasf-142saf-sa-asf
-
-        const user = await UserModel.create({email, password: hashPassword, activationLink})
-        // await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
-        
-        // const userDto = new UserDto(user); // id, email, isActivated
-        // const tokens = tokenService.generateTokens({...userDto});
-        // await tokenService.saveToken(userDto.id, tokens.refreshToken);
-
-        return {...tokens, user: userDto}
+    })
+    if (candidate) {
+        throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
     }
-}
+    const hashPassword = await bcrypt.hash(password, 3);
+    const activationLink = v4();
 
-export default UserService
+    const user = await UserModel.create({email, password: hashPassword, activationLink})
+    
+    // await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
+    
+    const userDto = new UserDto(user);
+    const tokens = await generateTokens({...userDto});
+    await saveToken(userDto.id, tokens.refreshToken);
+    
+    
+    return {...tokens, user: userDto}
+}

@@ -1,6 +1,5 @@
 import Router from 'koa-router'
 import { registration } from '../controllers/user-controller.js'
-import UserService from '../service/user-service.js'
 import busboy from 'koa-busboy';
 
 export const apiRoutes = new Router()
