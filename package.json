@@ -16,12 +16,11 @@
   "dependencies": {
     "@koa/cors": "^3.3.0",
     "bcrypt": "^5.0.1",
-    "co-busboy": "^1.5.0",
     "dotenv": "^16.0.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
-    "koa-busboy": "^1.2.0",
+    "koa-body": "^5.0.0",
     "koa-compress": "^5.1.0",
     "koa-convert": "^2.0.0",
     "koa-router": "^11.0.1",
