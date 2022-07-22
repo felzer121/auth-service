@@ -7,12 +7,12 @@ import bcrypt from 'bcrypt'
 
 export const registrationService = async (email, password) => {
     const candidate = await UserModel.findOne({
-        where: { 
+        where: {
             email: email
         }
     })
     if (candidate) {
-        throw ApiError.BadRequest(`Пользователь с почтовым адресом ${email} уже существует`)
+        throw ApiError.BadRequest(`Почтовый адрес ${email} уже зарегистрирован`)
     }
     const hashPassword = await bcrypt.hash(password, 3);
     const activationLink = v4();

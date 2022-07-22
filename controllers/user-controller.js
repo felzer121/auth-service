@@ -1,4 +1,5 @@
 import joi from 'joi'
+import ApiError from '../exceptions/api-error.js'
 import { registrationService, loginService, logoutService } from '../service/user-service.js'
 
 
@@ -17,14 +18,17 @@ export const registrationController = async (ctx, next) => {
         })
         const result = schema.validate({email: email, password: password});
         
-        if (result.error) 
-            ctx.body = result.error.message
+        if (result.error) {
+            ctx.status = err.status || 500;
+            ctx.body = err.message
+        }
         
         const userData = await registrationService(email, password)
         ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false, overwrite: false })
         ctx.body = userData
-    } catch (e) {
-        ctx.body = e
+    } catch (err) {
+        ctx.status = err.status || 500;
+        ctx.body = err.message
     }
 }
 
