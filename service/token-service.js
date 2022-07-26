@@ -30,3 +30,20 @@ export const removeToken = async (refreshToken) => {
     })
     return tokenData;
 }
+
+export const validateRefreshToken = async(token) => {
+    try {
+        const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+        
+        return userData;
+    } catch (e) {
+        return null;
+    }
+}
+
+export const findToken = async(refreshToken) => {
+    const tokenData = await TokenModel.findOne({
+        where: {refreshToken: refreshToken}
+    })
+    return tokenData;
+}

@@ -5,6 +5,9 @@ import { apiRoutes } from './router/router.js'
 import db from './models/index.js'
 import dotenv from 'dotenv'
 import koaBody from 'koa-body'
+import i18next from 'i18next'
+import Backend from 'i18next-fs-backend'
+import i18nextMiddleware from 'i18next-http-middleware'
 dotenv.config()
 
 // const { Pool } = postgresql;

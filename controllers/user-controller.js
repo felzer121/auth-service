@@ -1,6 +1,6 @@
 import joi from 'joi'
 import ApiError from '../exceptions/api-error.js'
-import { registrationService, loginService, logoutService } from '../service/user-service.js'
+import { registrationService, loginService, logoutService, refreshService } from '../service/user-service.js'
 
 
 export const registrationController = async (ctx, next) => {
@@ -39,10 +39,11 @@ export const loginController = async (ctx, next) => {
         const userData = await loginService(email, password)
         if(userData.status) 
             next(userData.message);
-        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false, overwrite: false })
+        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
         ctx.body = userData
-    } catch (e) {
-        next(e);
+    } catch (err) {
+        ctx.status = err.status || 500;
+        ctx.body = err.message
     }
 }
 
@@ -54,5 +55,17 @@ export const logoutController = async (ctx, next) => {
         ctx.body = token
     } catch (e) {
         ctx.body = e
+    }
+}
+
+export const refreshController = async (ctx, next) => {
+    try {
+        const refreshToken = ctx.cookies.get('refreshToken')
+        const userData = await refreshService(refreshToken);
+        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
+        ctx.body = userData
+    } catch(err) {
+        ctx.status = err.status || 500;
+        ctx.body = err.message
     }
 }
