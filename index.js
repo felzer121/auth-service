@@ -13,10 +13,13 @@ dotenv.config()
 // const { Pool } = postgresql;
 const PORT = process.env.PORT || 5000;
 
-const app = new Koa()
+    const app = new Koa()
 
 const start = async () => {
     try {
+        
+        await db.sequelize.authenticate()
+        await db.sequelize.sync()
         app
             .use(compress())
             .use(cors({
@@ -25,8 +28,6 @@ const start = async () => {
             }))
             .use(koaBody({ multipart: true }))
             .use(apiRoutes.routes())
-            await db.sequelize.authenticate()
-            await db.sequelize.sync()
 
         app.listen(PORT, () => {
             console.log(`start server in ${PORT} port`)

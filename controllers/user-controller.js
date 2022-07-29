@@ -24,7 +24,7 @@ export const registrationController = async (ctx, next) => {
         }
         
         const userData = await registrationService(email, password)
-        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false, overwrite: false })
+        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000 })
         ctx.body = userData
     } catch (err) {
         ctx.status = err.status || 500;
@@ -33,13 +33,13 @@ export const registrationController = async (ctx, next) => {
 }
 
 export const loginController = async (ctx, next) => {
-    try {
+    try {   
         const { email, password } = ctx.request.body
         
         const userData = await loginService(email, password)
         if(userData.status) 
             next(userData.message);
-        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
+        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, overwrite: true })
         ctx.body = userData
     } catch (err) {
         ctx.status = err.status || 500;
@@ -62,7 +62,7 @@ export const refreshController = async (ctx, next) => {
     try {
         const refreshToken = ctx.cookies.get('refreshToken')
         const userData = await refreshService(refreshToken);
-        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false })
+        ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, overwrite: true })
         ctx.body = userData
     } catch(err) {
         ctx.status = err.status || 500;
