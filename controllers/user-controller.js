@@ -1,7 +1,26 @@
 import joi from 'joi'
 import ApiError from '../exceptions/api-error.js'
 import { registrationService, loginService, logoutService, refreshService } from '../service/user-service.js'
+import { RoleModel } from '../models/role-model.js'
 
+export const isRoleCreate = async () => {
+    const roles = [
+        'user',
+        'admin'
+    ]
+    await Promise.all(roles.map(async role => {
+        const isRole = await RoleModel.findOne({
+            where: {
+                role: role
+            }
+        })
+        if(!isRole) {
+            await RoleModel.create({
+                role: role
+            })
+        }
+    }))
+}
 
 export const registrationController = async (ctx, next) => {
     try {

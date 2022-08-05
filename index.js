@@ -5,9 +5,7 @@ import { apiRoutes } from './router/router.js'
 import db from './models/index.js'
 import dotenv from 'dotenv'
 import koaBody from 'koa-body'
-import i18next from 'i18next'
-import Backend from 'i18next-fs-backend'
-import i18nextMiddleware from 'i18next-http-middleware'
+import {isRoleCreate} from './controllers/user-controller.js'
 dotenv.config()
 
 // const { Pool } = postgresql;
@@ -28,10 +26,11 @@ const start = async () => {
             }))
             .use(koaBody({ multipart: true }))
             .use(apiRoutes.routes())
-
+            
         app.listen(PORT, () => {
             console.log(`start server in ${PORT} port`)
         })
+        isRoleCreate()
     } catch (e) {
         console.log(e);
     }
