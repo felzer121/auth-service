@@ -1,8 +1,9 @@
 import Router from 'koa-router'
 import { registrationController, loginController, logoutController, refreshController } from '../controllers/user-controller.js'
+import authMiddleware from '../middleware/auth-middle.js'
 
 export const apiRoutes = new Router()
-    .get('/api', async (ctx, next) => {
+    .get('/api/test', authMiddleware, async (ctx, next) => {
         ctx.body = '123'
     })
 
@@ -13,3 +14,4 @@ export const apiRoutes = new Router()
     .post('/api/logout', logoutController)
 
     .get('/api/refresh', refreshController)
+

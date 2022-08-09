@@ -3,7 +3,7 @@ import { TokenModel } from '../models/token-model.js'
 
 export const generateTokens = async (payload) => {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '15s'})
-    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30s'})
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30m'})
     return {
         accessToken,
         refreshToken
@@ -31,10 +31,18 @@ export const removeToken = async (refreshToken) => {
     return tokenData;
 }
 
-export const validateRefreshToken = async(token) => {
+export const validateRefreshToken = async (token) => {
     try {
         const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-        
+        return userData;
+    } catch (e) {
+        return null;
+    }
+}
+
+export const validateAccessToken = async (token) => {
+    try {
+        const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
         return userData;
     } catch (e) {
         return null;

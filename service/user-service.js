@@ -4,6 +4,7 @@ import { generateTokens, saveToken, removeToken, validateRefreshToken, findToken
 import UserDto from '../dtos/user-dto.js'
 import { v4 } from 'uuid'
 import bcrypt from 'bcrypt'
+import { RoleModel } from '../models/role-model.js'
 
 export const registrationService = async (email, password) => {
     const candidate = await UserModel.findOne({
@@ -17,9 +18,16 @@ export const registrationService = async (email, password) => {
     const hashPassword = await bcrypt.hash(password, 3);
     const activationLink = v4();
 
+    const role = await RoleModel.findOne({
+        where: {
+            role: 'user'
+        }
+    })
+
     const user = await UserModel.create({
         email,
         password: hashPassword,
+        RoleId: role.id,
         activationLink
     })
     
@@ -68,7 +76,7 @@ export const refreshService = async (refreshToken) => {
     const tokenFromDb = await findToken(refreshToken);
     
     if (!userData || !tokenFromDb) {
-        throw ApiError.UnauthorizedError();
+        throw ApiError.BadRequest();
     }
     const user = await UserModel.findByPk(userData.id);
     const userDto = new UserDto(user);

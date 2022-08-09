@@ -56,8 +56,8 @@ export const loginController = async (ctx, next) => {
         const { email, password } = ctx.request.body
         
         const userData = await loginService(email, password)
-        if(userData.status) 
-            next(userData.message);
+        if(userData.status)
+           throw ApiError.UnauthorizedError(userData.message);
         ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, overwrite: true })
         ctx.body = userData
     } catch (err) {
@@ -80,7 +80,7 @@ export const logoutController = async (ctx, next) => {
 export const refreshController = async (ctx, next) => {
     try {
         const refreshToken = ctx.cookies.get('refreshToken')
-        const userData = await refreshService(refreshToken);
+        const userData = await refreshService(refreshToken)
         ctx.cookies.set('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, overwrite: true })
         ctx.body = userData
     } catch(err) {

@@ -31,7 +31,7 @@ const start = async () => {
             console.log(`start server in ${PORT} port`)
         })
         isRoleCreate()
-    } catch (e) {
+    } catch (e) {   
         console.log(e);
     }
 }
